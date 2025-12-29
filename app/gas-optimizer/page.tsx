@@ -2,107 +2,197 @@
 
 import { useEffect, useState } from 'react';
 import { fetchGasPrices } from '@/lib/gasOracle';
+import { fetchEthPrice } from '@/lib/prices';
+
+type GasData = {
+  slow: number;
+  standard: number;
+  fast: number;
+};
 
 export default function GasOptimizer() {
-  const [gas, setGas] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [gas, setGas] = useState<GasData | null>(null);
+  const [ethPrice, setEthPrice] = useState(0);
   const [gasLimit, setGasLimit] = useState(21000);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    async function loadGas() {
-      try {
-        const prices = await fetchGasPrices();
-        setGas(prices);
-      } catch {
-        setError('Failed to load gas prices');
-      } finally {
-        setLoading(false);
-      }
+  async function loadData() {
+    try {
+      setLoading(true);
+      const [gasData, ethUsd] = await Promise.all([
+        fetchGasPrices(),
+        fetchEthPrice(),
+      ]);
+      setGas({
+        slow: gasData.low,
+        standard: gasData.medium,
+        fast: gasData.high,
+      });
+      setEthPrice(ethUsd);
+    } catch (e) {
+      console.error('Failed to load gas data', e);
+    } finally {
+      setLoading(false);
     }
-
-    loadGas();
-  }, []);
-
-  function ethCost(gwei: number) {
-    return ((gasLimit * gwei) / 1e9).toFixed(6);
   }
 
-  function advice() {
-    if (!gas) return '';
+  useEffect(() => {
+    loadData();
+    const interval = setInterval(loadData, 20000);
+    return () => clearInterval(interval);
+  }, []);
 
-    const medium = Number(gas.medium);
-
-    if (medium <= 20) return '🟢 Very cheap gas. Great time to transact.';
-    if (medium <= 40) return '🟡 Normal gas. OK for most transactions.';
-    return '🔴 High gas. Consider waiting if possible.';
+  function estimateCost(
+    gasPrice: number,
+    gasLimit: number,
+    ethPrice: number
+  ) {
+    const eth =
+      gasLimit * gasPrice * 1e-9;
+    return eth * ethPrice;
   }
 
   return (
-    <main className="p-8 max-w-2xl">
-      <h1 className="text-2xl font-bold">Gas Fee Optimizer</h1>
+    <main className="p-8 max-w-4xl mx-auto">
+      <h1 className="text-2xl font-bold">
+        Gas Fee Optimizer
+      </h1>
 
-      <p className="mt-2 text-gray-600">
-        Live Ethereum gas prices with simple cost estimates.
-      </p>
+      {/* Live Gas Prices */}
+      <div
+        className="mt-6 rounded-xl p-6 glow-card"
+        style={{
+          border: '1px solid var(--border)',
+        }}
+      >
+        <h2 className="mb-4 font-semibold">
+          ⛽ Live Gas Prices (Ethereum)
+        </h2>
 
-      {loading && (
-        <p className="mt-4 text-gray-500">
-          ⛽ Fetching gas prices…
-        </p>
-      )}
+        {loading && !gas && (
+          <p className="text-gray-400">
+            Loading gas prices…
+          </p>
+        )}
 
-      {error && (
-        <p className="mt-4 text-red-600">{error}</p>
-      )}
+        {gas && (
+          <div className="space-y-3 text-sm">
+            <GasRow label="🐢 Slow" value={gas.slow} />
+            <GasRow
+              label="🚗 Standard"
+              value={gas.standard}
+            />
+            <GasRow label="🚀 Fast" value={gas.fast} />
 
-      {gas && (
-        <div className="mt-6 space-y-4">
-          {/* Gas Limit Input */}
-          <div className="rounded border p-4">
-            <label className="block text-sm font-medium mb-1">
-              Gas Limit
-            </label>
+            <p className="text-xs text-gray-500 mt-2">
+              Updates every 20 seconds
+            </p>
+          </div>
+        )}
+      </div>
 
-            <input
-              type="number"
-              value={gasLimit}
-              onChange={(e) =>
-                setGasLimit(Number(e.target.value))
-              }
-              className="w-full rounded border px-3 py-2"
+      {/* Tx Cost Estimator */}
+      <div
+        className="mt-6 rounded-xl p-6 glow-card"
+        style={{
+          border: '1px solid var(--border)',
+        }}
+      >
+        <h2 className="mb-4 font-semibold">
+          💸 Transaction Cost Estimator
+        </h2>
+
+        {/* Gas limit input */}
+        <div className="mb-4">
+          <label className="block text-sm mb-1 text-gray-400">
+            Gas Limit
+          </label>
+          <input
+            type="number"
+            value={gasLimit}
+            onChange={(e) =>
+              setGasLimit(Number(e.target.value))
+            }
+            className="w-full px-3 py-2 rounded bg-transparent border outline-none"
+            style={{ borderColor: 'var(--border)' }}
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            ETH transfer ≈ 21,000 · Swap ≈
+            100,000+
+          </p>
+        </div>
+
+        {/* Estimates */}
+        {gas && ethPrice > 0 && (
+          <div className="space-y-3 text-sm">
+            <CostRow
+              label="🐢 Slow"
+              value={estimateCost(
+                gas.slow,
+                gasLimit,
+                ethPrice
+              )}
+            />
+            <CostRow
+              label="🚗 Standard"
+              value={estimateCost(
+                gas.standard,
+                gasLimit,
+                ethPrice
+              )}
+            />
+            <CostRow
+              label="🚀 Fast"
+              value={estimateCost(
+                gas.fast,
+                gasLimit,
+                ethPrice
+              )}
             />
 
-            <p className="mt-1 text-xs text-gray-500">
-              21,000 = simple ETH transfer
+            <p className="text-xs text-gray-500 mt-2">
+              Based on live gas + ETH USD
+              price
             </p>
           </div>
-
-          {/* Gas Prices + ETH Cost */}
-          <div className="rounded border p-4 space-y-2">
-            <p>
-              🟢 Slow: {gas.low} Gwei → ~
-              {ethCost(Number(gas.low))} ETH
-            </p>
-            <p>
-              🟡 Standard: {gas.medium} Gwei → ~
-              {ethCost(Number(gas.medium))} ETH
-            </p>
-            <p>
-              🔴 Fast: {gas.high} Gwei → ~
-              {ethCost(Number(gas.high))} ETH
-            </p>
-          </div>
-
-          {/* Recommendation */}
-          <div className="rounded border p-4 bg-gray-50">
-            <p className="font-medium">Recommendation</p>
-            <p className="mt-1 text-gray-700">
-              {advice()}
-            </p>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </main>
+  );
+}
+
+/* ---------------- UI Helpers ---------------- */
+
+function GasRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: number;
+}) {
+  return (
+    <div className="flex justify-between">
+      <span>{label}</span>
+      <span className="font-medium">
+        {value} gwei
+      </span>
+    </div>
+  );
+}
+
+function CostRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: number;
+}) {
+  return (
+    <div className="flex justify-between">
+      <span>{label}</span>
+      <span className="font-medium">
+        ≈ ${value.toFixed(2)}
+      </span>
+    </div>
   );
 }

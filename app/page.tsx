@@ -1,79 +1,126 @@
 'use client';
 
-export default function Dashboard() {
+export default function Home() {
   return (
-    <main className="p-8 max-w-5xl mx-auto text-gray-900 dark:text-gray-100">
+    <main className="p-8 max-w-6xl mx-auto text-gray-900 dark:text-gray-100">
+      {/* Hero */}
       <h1 className="text-4xl font-bold tracking-tight">
-        TxnWise
+        TxnWatchr
       </h1>
 
       <p className="mt-3 max-w-2xl text-gray-600 dark:text-gray-400 text-lg">
-        Simple, educational Web3 tools to help you understand
-        transactions, avoid risky tokens, and save on gas fees.
+        A modern on-chain toolkit to explore wallets, assets,
+        and risks across multiple blockchains.
       </p>
 
-      <div className="mt-10 grid gap-6 sm:grid-cols-3">
-        {[
-          {
-            icon: '🧠',
-            title: 'AI Wallet Assistant',
-            desc: 'Understand wallet transactions in plain English.',
-            href: '/wallet-assistant',
-          },
-          {
-            icon: '🔍',
-            title: 'Rug Detector',
-            desc: 'Analyze token contracts for risk signals.',
-            href: '/rug-detector',
-          },
-          {
-            icon: '⛽',
-            title: 'Gas Fee Optimizer',
-            desc: 'Estimate gas costs and find the best time to transact.',
-            href: '/gas-optimizer',
-          },
+      {/* DASHBOARDS */}
+      <section className="mt-12">
+        <h2 className="text-xl font-semibold mb-4">
+          🌐 Dashboards
+        </h2>
 
-          // ✅ NEW: Multi-Chain Dashboard
-          {
-            icon: '🌐',
-            title: 'Multi-Chain Dashboard',
-            desc: 'View balances, tokens, prices, and activity across Ethereum, L2s, and Base.',
-            href: '/multichain',
-          },
-        ].map((tool) => (
-          <a
-            key={tool.title}
-            href={tool.href}
-            className="group rounded-xl border p-6 transition hover:shadow-lg dark:border-gray-800 dark:hover:bg-gray-900"
-          >
-            <div className="text-3xl">{tool.icon}</div>
-            <h2 className="mt-3 text-lg font-semibold group-hover:underline">
-              {tool.title}
-            </h2>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              {tool.desc}
+        <div className="grid gap-6 sm:grid-cols-2">
+          <ToolCard
+            icon="🌐"
+            title="Multi-Chain Dashboard"
+            desc="View balances, tokens, prices, and recent activity across Ethereum, L2s, and Base."
+            href="/multichain"
+            badge="Flagship"
+          />
+        </div>
+      </section>
+
+      {/* WALLET TOOLS */}
+      <section className="mt-14">
+        <h2 className="text-xl font-semibold mb-4">
+          🧠 Wallet Tools
+        </h2>
+
+        <div className="grid gap-6 sm:grid-cols-3">
+          <ToolCard
+            icon="🧠"
+            title="AI Wallet Assistant"
+            desc="Understand wallet transactions in plain English."
+            href="/wallet-assistant"
+          />
+
+          <ToolCard
+            icon="⛽"
+            title="Gas Fee Optimizer"
+            desc="Estimate gas costs and find the best time to transact."
+            href="/gas-optimizer"
+          />
+        </div>
+      </section>
+
+      {/* SECURITY */}
+      <section className="mt-14">
+        <h2 className="text-xl font-semibold mb-4">
+          🛡 Security & Risk
+        </h2>
+
+        <div className="grid gap-6 sm:grid-cols-3">
+          <ToolCard
+            icon="🔍"
+            title="Rug Detector"
+            desc="Analyze token contracts for common risk signals."
+            href="/rug-detector"
+          />
+
+          {/* Placeholder for future */}
+          <div className="rounded-xl border border-dashed p-6 text-sm text-gray-400 dark:border-gray-700">
+            Approval Checker
+            <p className="mt-2">
+              Coming soon — review token approvals for wallet safety.
             </p>
-          </a>
-        ))}
-      </div>
+          </div>
+        </div>
+      </section>
 
-      <div className="mt-14 rounded-lg bg-gray-50 p-6 dark:bg-gray-900">
-        <h3 className="font-semibold text-lg">
-          Who is TxnWise for?
-        </h3>
-
-        <ul className="mt-3 space-y-2 text-sm text-gray-700 dark:text-gray-400">
-          <li>• New crypto users who want clarity</li>
-          <li>• Traders checking token risk quickly</li>
-          <li>• Builders testing wallets and contracts</li>
-          <li>• Anyone tired of guessing in Web3</li>
-        </ul>
-      </div>
-
-      <p className="mt-10 text-xs text-gray-400 max-w-2xl">
-        Educational use only. No financial advice.
+      {/* Footer note */}
+      <p className="mt-16 text-xs text-gray-400 max-w-2xl">
+        Educational use only. TxnWatchr does not provide financial advice.
       </p>
     </main>
   );
 }
 
+/* ---------------------------------
+   Reusable Tool Card
+---------------------------------- */
+function ToolCard({
+  icon,
+  title,
+  desc,
+  href,
+  badge,
+}: {
+  icon: string;
+  title: string;
+  desc: string;
+  href: string;
+  badge?: string;
+}) {
+  return (
+    <a
+      href={href}
+      className="group relative rounded-xl border p-6 transition hover:shadow-lg dark:border-gray-800 dark:hover:bg-gray-900"
+    >
+      {badge && (
+        <span className="absolute right-4 top-4 rounded bg-black px-2 py-0.5 text-xs text-white">
+          {badge}
+        </span>
+      )}
+
+      <div className="text-3xl">{icon}</div>
+
+      <h3 className="mt-3 text-lg font-semibold group-hover:underline">
+        {title}
+      </h3>
+
+      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+        {desc}
+      </p>
+    </a>
+  );
+}

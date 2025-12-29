@@ -14,6 +14,12 @@ export const CHAINS: Record<string, ChainConfig> = {
     symbol: 'ETH',
     rpcUrl: `https://api.zan.top/node/v1/eth/mainnet/${ZAN_KEY}`,
   },
+  bsc: {
+    id: 'binancecoin',
+    name: 'BNB Chain',
+    symbol: 'BNB',
+    rpcUrl: `https://api.zan.top/node/v1/bsc/mainnet/${ZAN_KEY}`,
+},
   polygon: {
     id: 'polygon',
     name: 'Polygon',

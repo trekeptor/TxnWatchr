@@ -16,7 +16,7 @@ const { chains, provider } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: 'TxnWise',
+  appName: 'TxnWatchr',
   projectId: 'YOUR_WALLETCONNECT_PROJECT_ID',
   chains,
 });

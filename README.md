@@ -1,6 +1,6 @@
-# TxnWise 🌐
+# TxnWatchr 🌐
 
-**TxnWise** is a Web3 utility platform that helps users understand wallets, evaluate token risk, optimize gas fees, and view multi-chain portfolio data — all in one place.
+**TxnWatchr** is a Web3 utility platform that helps users understand wallets, evaluate token risk, optimize gas fees, and view multi-chain portfolio data — all in one place.
 
 ## 🚀 Features
 
