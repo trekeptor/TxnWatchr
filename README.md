@@ -30,17 +30,17 @@
 - **TypeScript**
 - **Tailwind CSS**
 - **ZAN RPC** (multi-chain)
+- **Moralis RPC** (Pricing)
 - **CoinGecko API** (pricing)
 
 ---
 
 ## 📸 Screenshots
 
-<img width="1920" height="797" alt="Screenshot (554)" src="https://github.com/user-attachments/assets/56cb5162-09ec-4b0c-91a1-51e4f5f1a818" />
-<img width="1889" height="868" alt="Screenshot (553)" src="https://github.com/user-attachments/assets/1e4461e9-c06d-4ce9-ac44-31304603c38b" />
-<img width="1920" height="786" alt="Screenshot (555)" src="https://github.com/user-attachments/assets/63dc9062-7e7c-498a-9bbc-3cfa90e86d82" />
-
-
+<img width="1920" height="889" alt="Screenshot (560)" src="https://github.com/user-attachments/assets/669be14b-bca4-4bc1-a11b-b61b7dd99e64" />
+<img width="1920" height="886" alt="Screenshot (559)" src="https://github.com/user-attachments/assets/cbbef5c1-25fe-4cb5-83ae-6c9dfbe1ac30" />
+<img width="1920" height="874" alt="Screenshot (558)" src="https://github.com/user-attachments/assets/113d8c03-25e4-4acc-8061-57ea71f09957" />
+<img width="1920" height="871" alt="Screenshot (557)" src="https://github.com/user-attachments/assets/cadaa658-79bc-4b31-a83d-8e2fa66215df" />
 
 ---
 
